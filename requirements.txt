@@ -1,4 +1,4 @@
-streamlit
+streamlit==1.32.2
 torch
 torchvision
 numpy
@@ -6,3 +6,4 @@ pillow
 matplotlib
 opencv-python-headless
 pytorch-grad-cam
+rich<14
