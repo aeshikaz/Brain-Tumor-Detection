@@ -6,6 +6,12 @@ from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
 
+import sys
+import types
+
+sys.modules["cv2"] = types.ModuleType("cv2")
+sys.modules["cv2"].COLORMAP_JET = None
+
 from pytorch_grad_cam import GradCAM
 
 st.set_page_config(page_title="Brain Tumor Detection", layout="centered")
