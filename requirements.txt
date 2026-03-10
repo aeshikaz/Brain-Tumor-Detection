@@ -5,5 +5,5 @@ numpy
 pillow
 matplotlib
 opencv-python-headless
-pytorch-grad-cam
+grad-cam
 rich<14
