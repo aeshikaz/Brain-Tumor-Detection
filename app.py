@@ -20,12 +20,16 @@ class_names = ['glioma','meningioma','notumor','pituitary']
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Load model
-model = models.resnet50(weights=None)
-model.fc = nn.Linear(model.fc.in_features, len(class_names))
+@st.cache_resource
+def load_model():
+    model = models.resnet50(weights=None)
+    model.fc = nn.Linear(model.fc.in_features, len(class_names))
+    model.load_state_dict(torch.load(MODEL_PATH, map_location=device))
+    model = model.to(device)
+    model.eval()
+    return model
 
-model.load_state_dict(torch.load(MODEL_PATH, map_location=device))
-model = model.to(device)
-model.eval()
+model = load_model()
 
 # Target layer for Grad-CAM
 target_layers = [model.layer4[-1]]
