@@ -4,6 +4,8 @@ import torch.nn as nn
 from torchvision import models, transforms
 from PIL import Image
 import numpy as np
+import matplotlib.pyplot as plt
+
 
 from pytorch_grad_cam import GradCAM
 from pytorch_grad_cam.utils.image import show_cam_on_image
@@ -74,7 +76,10 @@ if uploaded_file:
 
     grayscale_cam = cam(input_tensor=input_tensor)[0]
 
-    visualization = show_cam_on_image(img_np, grayscale_cam, use_rgb=True)
-    st.subheader("Tumor Localization (Grad-CAM)")
+   
+fig, ax = plt.subplots()
+ax.imshow(img_np)
+ax.imshow(grayscale_cam, cmap="jet", alpha=0.5)
+ax.axis("off")
 
-    st.image(visualization, caption="Model attention heatmap", width=300)
+st.pyplot(fig)
