@@ -6,7 +6,7 @@ Users can upload an MRI scan and the model predicts whether a tumor is present a
 The model is built using **ResNet50** and deployed as an interactive web app using **Streamlit**.
 
 ## Live Demo
-https://brain-tumor-detection-7wtnbqes4qcth4nfrbrgdz.streamlit.app
+https://brain-tumor-detection-ttnds7g4pxiydrhimzfans.streamlit.app
 
 ## How it works
 1. Upload an MRI brain scan.
