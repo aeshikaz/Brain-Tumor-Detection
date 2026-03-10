@@ -16,9 +16,10 @@ st.set_page_config(
 
 MODEL_PATH = "final_brain_tumor_model.pth"
 
-class_names = ['glioma','meningioma','notumor','pituitary']
+class_names = ['glioma', 'meningioma', 'notumor', 'pituitary']
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 
 # Load model
 @st.cache_resource
@@ -30,6 +31,7 @@ def load_model():
     model.eval()
     return model
 
+
 model = load_model()
 
 # Target layer for Grad-CAM
@@ -37,10 +39,12 @@ target_layers = [model.layer4[-1]]
 
 # Image preprocessing
 transform = transforms.Compose([
-    transforms.Resize((224,224)),
+    transforms.Resize((224, 224)),
     transforms.ToTensor(),
-    transforms.Normalize([0.485,0.456,0.406],
-                         [0.229,0.224,0.225])
+    transforms.Normalize(
+        [0.485, 0.456, 0.406],
+        [0.229, 0.224, 0.225]
+    )
 ])
 
 st.title("Brain Tumor Detection")
@@ -53,32 +57,31 @@ if uploaded_file:
 
     st.image(image, caption="Uploaded MRI", width=300)
 
-    # Preprocess
+    # Preprocess image
     input_tensor = transform(image).unsqueeze(0).to(device)
 
     # Prediction
     with torch.no_grad():
         outputs = model(input_tensor)
         probs = torch.softmax(outputs, dim=1)
-        confidence, pred = torch.max(probs,1)
+        confidence, pred = torch.max(probs, 1)
 
     st.success(f"Prediction: {class_names[pred.item()]}")
     st.metric("Confidence", f"{confidence.item()*100:.2f}%")
 
     # Prepare image for GradCAM
-    img_np = np.array(image.resize((224,224))).astype("float32") / 255.0
+    img_np = np.array(image.resize((224, 224))).astype("float32") / 255.0
 
     # Grad-CAM
-    target_layers = [model.layer4[-1]]
-
     cam = GradCAM(model=model, target_layers=target_layers)
 
     grayscale_cam = cam(input_tensor=input_tensor)[0]
 
-   
-fig, ax = plt.subplots()
-ax.imshow(img_np)
-ax.imshow(grayscale_cam, cmap="jet", alpha=0.5)
-ax.axis("off")
+    # Plot heatmap
+    fig, ax = plt.subplots()
 
-st.pyplot(fig)
+    ax.imshow(img_np)
+    ax.imshow(grayscale_cam, cmap="jet", alpha=0.5)
+    ax.axis("off")
+
+    st.pyplot(fig)
