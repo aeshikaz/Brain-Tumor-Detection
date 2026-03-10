@@ -8,9 +8,20 @@ import matplotlib.pyplot as plt
 
 import sys
 import types
+import numpy as np
+from PIL import Image
 
-sys.modules["cv2"] = types.ModuleType("cv2")
-sys.modules["cv2"].COLORMAP_JET = None
+cv2 = types.ModuleType("cv2")
+
+def resize(img, size):
+    pil = Image.fromarray((img * 255).astype("uint8"))
+    pil = pil.resize(size)
+    return np.array(pil) / 255.0
+
+cv2.resize = resize
+cv2.COLORMAP_JET = None
+
+sys.modules["cv2"] = cv2
 
 from pytorch_grad_cam import GradCAM
 
