@@ -38,7 +38,7 @@ transform = transforms.Compose([
                          [0.229,0.224,0.225])
 ])
 
-st.title("🧠 Brain Tumor Detection")
+st.title("Brain Tumor Detection")
 
 uploaded_file = st.file_uploader("Upload MRI Image")
 
@@ -57,19 +57,20 @@ if uploaded_file:
         probs = torch.softmax(outputs, dim=1)
         confidence, pred = torch.max(probs,1)
 
-    st.write("Prediction:", class_names[pred.item()])
-    st.write("Confidence:", float(confidence))
+    st.success(f"Prediction: {class_names[pred.item()]}")
+    st.metric("Confidence", f"{confidence.item()*100:.2f}%")
 
     # Prepare image for GradCAM
-    img_np = np.array(image.resize((224,224))) / 255.0
+    img_np = np.array(image.resize((224,224))).astype("float32") / 255.0
 
     # Grad-CAM
+    target_layers = [model.layer4[-1]]
+
     cam = GradCAM(model=model, target_layers=target_layers)
 
     grayscale_cam = cam(input_tensor=input_tensor)[0]
 
     visualization = show_cam_on_image(img_np, grayscale_cam, use_rgb=True)
-
     st.subheader("Tumor Localization (Grad-CAM)")
 
     st.image(visualization, caption="Model attention heatmap", width=300)
