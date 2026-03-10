@@ -4,6 +4,5 @@ torchvision
 numpy
 pillow
 matplotlib
-opencv-python-headless
 grad-cam
-rich<14
+opencv-python-headless
